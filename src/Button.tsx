@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 
 type ButtonProps = {
-  onClickHandler: (n: number) => void;
+  onClickHandler: (n: number, countdownResetValueMs?: number) => void;
   n: number;
-  disableDelayMs?: number;
+  disableDelayKoeffMs?: number;
+  countdownResetValueMs?: number;
 };
 
-const Button = ({ onClickHandler, n, disableDelayMs = 500 }: ButtonProps) => {
+const Button = ({
+  onClickHandler,
+  n,
+  countdownResetValueMs,
+  disableDelayKoeffMs = 500,
+}: ButtonProps) => {
   const [isDisabled, setIsDisabled] = useState(false);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -14,9 +20,13 @@ const Button = ({ onClickHandler, n, disableDelayMs = 500 }: ButtonProps) => {
   // Handle the click and disable the button for `n * disableDelayMs`.
   const onClick = () => {
     setIsDisabled(true);
-    onClickHandler(n);
+    onClickHandler(n, countdownResetValueMs);
 
-    timerRef.current = setTimeout(setIsDisabled, n * disableDelayMs, false);
+    timerRef.current = setTimeout(
+      setIsDisabled,
+      n * disableDelayKoeffMs,
+      false
+    );
   };
 
   useEffect(() => {

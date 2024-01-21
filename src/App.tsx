@@ -4,41 +4,43 @@ import Button from "./Button";
 import "./App.css";
 
 type AppProps = {
-  waitIntervalMs?: number;
-  decrementIntervalMs?: number;
+  counterCountdownIntervalMs?: number;
+  counterDecrementIntervalMs?: number;
   counterDecrementStep?: number;
 };
 
 function App({
-  decrementIntervalMs = 1000,
-  waitIntervalMs = 10000,
+  counterDecrementIntervalMs = 1000,
+  counterCountdownIntervalMs = 10000,
   counterDecrementStep = 1,
 }: AppProps) {
   const [counter, setCounter] = useState(0);
-  const [countdownInterval, setCountdownInterval] = useState(waitIntervalMs);
+  const [countdownInterval, setCountdownInterval] = useState(
+    counterCountdownIntervalMs
+  );
 
   let decrementTimerRef = useRef<NodeJS.Timeout | null>(null);
   let countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Decrement counter with a rate of `counterDecrementStep` per `decrementIntervalMs` until it reaches 0.
+  // Decrement counter with a rate of `counterDecrementStep` per `counterDecrementIntervalMs` until it reaches 0.
   const decrementCounter = useCallback(() => {
     if (counter > 0) {
       setCounter((currentState) => currentState - counterDecrementStep);
     }
   }, [counter, counterDecrementStep]);
 
-  // Start decrement counter if `waitIntervalMs` has passed without any button clicks.
+  // Start decrement counter if `counterCountdownIntervalMs` has passed without any button clicks.
   useEffect(() => {
     if (countdownInterval === 0) {
       decrementTimerRef.current = setInterval(
         decrementCounter,
-        decrementIntervalMs
+        counterDecrementIntervalMs
       );
     }
     return () => clearInterval(decrementTimerRef.current as NodeJS.Timeout);
-  }, [countdownInterval, decrementIntervalMs, decrementCounter]);
+  }, [countdownInterval, counterDecrementIntervalMs, decrementCounter]);
 
-  // Countdown timer from `waitIntervalMs` to 0 every 1 second. The timer is tight to regular time, hence hardcoded interval here.
+  // Countdown timer from `counterCountdownIntervalMs` to 0 every 1 second. The timer is tight to regular time, hence hardcoded interval here.
   useEffect(() => {
     countdownTimerRef.current = setTimeout(() => {
       if (countdownInterval > 0) {
@@ -49,10 +51,14 @@ function App({
     return () => clearTimeout(countdownTimerRef.current as NodeJS.Timeout);
   });
 
-  // Button click handler: add `n` to the counter and reset the countdown timer by setting to defautl value, wait for `waitIntervalMs` again.
-  const onClickHandler = (n: number) => {
+  // Button click handler: add `n` to the counter and reset the countdown timer.
+  // Each button can reset the timer to an individual value, default is the original start value of `counterCountdownIntervalMs`.
+  const onClickHandler = (
+    n: number,
+    countdownResetValueMs: number = counterCountdownIntervalMs
+  ) => {
     setCounter((currentState) => currentState + n);
-    setCountdownInterval(waitIntervalMs);
+    setCountdownInterval(countdownResetValueMs);
   };
 
   return (
