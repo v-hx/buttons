@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import logo from "./button.svg";
-import Button from "./Button";
-import "./App.css";
+import logo from "../static/button.svg";
+import Button from "../components/Button";
+import "../static/App.css";
 
 type AppProps = {
   counterCountdownIntervalMs?: number;
