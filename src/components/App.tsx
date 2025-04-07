@@ -40,16 +40,18 @@ function App({
     return () => clearInterval(decrementTimerRef.current as NodeJS.Timeout);
   }, [countdownInterval, counterDecrementIntervalMs, decrementCounter]);
 
-  // Countdown timer from `counterCountdownIntervalMs` to 0 every 1 second. The timer is tight to regular time, hence hardcoded interval here.
+  // Countdown timer from `counterCountdownIntervalMs` to 0 every counterDecrementIntervalMs second. The timer is tight to regular time, hence hardcoded interval here.
   useEffect(() => {
     countdownTimerRef.current = setTimeout(() => {
       if (countdownInterval > 0) {
-        setCountdownInterval((currentState) => currentState - 1000);
+        setCountdownInterval(
+          (currentState) => currentState - counterDecrementIntervalMs
+        );
       }
-    }, 1000);
+    }, counterDecrementIntervalMs);
 
     return () => clearTimeout(countdownTimerRef.current as NodeJS.Timeout);
-  });
+  }, [countdownInterval, counterDecrementIntervalMs]);
 
   // Button click handler: add `n` to the counter and reset the countdown timer.
   // Each button can reset the timer to an individual value, default is the original start value of `counterCountdownIntervalMs`.
